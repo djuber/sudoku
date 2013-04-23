@@ -1,4 +1,6 @@
-class Sudoku():
+
+
+class Grid():
     def __init__(self):
         self._rows = self.empty_grid()
     def empty_grid(self):
@@ -23,4 +25,6 @@ class Sudoku():
             return self._rows[n]
         else:
             raise IndexError
-            
+
+class Sudoku(Grid):
+    pass
