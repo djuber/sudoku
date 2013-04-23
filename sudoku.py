@@ -31,6 +31,9 @@ class Grid():
             raise IndexError
     def __getitem__(self, index):
         return self._rows[index]
+    def __setitem__(self, index, value):
+        self._rows[index] = value
+        return self
     def rows(self):
         return self._rows
     def row(self, n):
@@ -61,15 +64,61 @@ class Sudoku(Grid):
             if box[i] != 0 and box[i] in box[i+1:]:
                 return False
         return True
+    def square_to_box(self, square):
+        sq = self.square(square)
+        box = []
+        for i in sq:
+            for j in i:
+                box.append( j)
+        return box
     def row_consistent(self, row):
         "any non-zero entry should be unique"
         return self.unique_non_zero(self[row])
     def col_consistent(self, col):
         return self.unique_non_zero(self.col(col))
     def square_consistent(self, square):
-        sq = self.square(square)
-        box = []
-        for i in sq:
-            for j in i:
-                box.append( j)
-        return self.unique_non_zero(box)
+        return self.unique_non_zero(self.square_to_box(square))
+    def has_zero_in(self, box):
+        for i in box:
+            if i == 0:
+                return True
+        return False
+    def consistent(self):
+        for i in range(9):
+            if not self.row_consistent(i):
+                return False
+            if not self.col_consistent(i):
+                return False
+            if not self.square_consistent(i):
+                return False
+        return True
+    def has_zero(self):
+        for i in range(9):
+            if self.has_zero_in(self.row(i)):
+                return True
+            if self.has_zero_in(self.col(i)):
+                return True
+            if self.has_zero_in(self.square_to_box(i)):
+                return True
+        return False
+    def solved(self):
+        if self.consistent() and not self.has_zero():
+            return True
+        else:
+            return False
+
+
+class SudokuSolver():
+    def possible(self, puzzle, row, col):
+        if puzzle[row][col] != 0:
+            return [puzzle[row][col]]
+        else:
+            possibilities = []
+            for i in range(1,10):
+                puzzle[row][col] = i
+                if puzzle.consistent():
+                    possibilities.append(i)
+            puzzle[row][col] = 0
+            return possibilities
+    def solve(self, puzzle):
+        pass
