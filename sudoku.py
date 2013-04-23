@@ -56,5 +56,16 @@ class Grid():
             return square
 
 class Sudoku(Grid):
-    pass
+    def row_consistent(self, row):
+        "any non-zero entry should be unique"
+        for i in range(9):
+            if self[row][i] != 0:
+                if self[row][i] in self[row][i+1:]:
+                    return False
+        return True
+    def col_consistent(self, col):
+        for i in range(9):
+            if (self[i][col] != 0) and self[i][col] in self.col(col)[i+1:]:
+                return False
+        return True
 
