@@ -26,6 +26,14 @@ class SudokuTests(unittest.TestCase):
         """
         self.puzzle[0][0] = 1
         self.assertEqual(1, self.puzzle[0][0])
+    def test_empty_square(self):
+        self.assertEqual(3, len(self.puzzle.empty_square()))
+        self.assertEqual(3, len(self.puzzle.empty_square()[0]))
+    def test_empty_squares(self):
+        self.assertEqual(9, len(self.puzzle.empty_squares()))
+    def test_squares_gives_answer(self):
+        self.assertTrue(self.puzzle.squares())
+
 
 if __name__ == '__main__':
     unittest.main()
