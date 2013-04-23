@@ -1,5 +1,5 @@
 import unittest
-from sudoku import *
+from sudoku import Grid, Sudoku
 
 class GridTests(unittest.TestCase):
     def setUp(self):
@@ -89,6 +89,30 @@ class SudokuTest(unittest.TestCase):
         self.assertFalse(self.puzzle.row_consistent(8))
         self.assertFalse(self.puzzle.col_consistent(8))
         self.puzzle[8][8] = tmp
+    def test_squares_are_all_inconsistent(self):
+        for i in range(9):
+            self.assertFalse(self.puzzle.square_consistent(i))
+    def test_squares_of_empty_are_consistent(self):
+        for i in range(9):
+            self.assertTrue(self.empty.square_consistent(i))
+    def test_square_can_be_consistent(self):
+        tmp = Sudoku()
+        self.assertTrue(tmp.square_consistent(0))
+        tmp[0][0] = 1
+        tmp[0][1] = 2
+        tmp[0][2] = 3
+        self.assertTrue(tmp.square_consistent(0))
+        tmp[1][0] = 4
+        tmp[1][1] = 5
+        tmp[1][2] = 3
+        self.assertFalse(tmp.square_consistent(0))
+        tmp[1][2] = 6
+        self.assertTrue(tmp.square_consistent(0))
+        tmp[2][0] = 7
+        tmp[2][0] = 8
+        self.assertTrue(tmp.square_consistent(0))
+        tmp[2][2] = 5
+        self.assertFalse(tmp.square_consistent(0))
 
 if __name__ == '__main__':
     unittest.main()
