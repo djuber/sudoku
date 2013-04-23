@@ -5,15 +5,27 @@ class SudokuTests(unittest.TestCase):
     def setUp(self):
         self.puzzle = Sudoku()
     def test_class_exists(self):
-        "this test verifies a class Sudoku exists"
+        "verifies a class Sudoku exists"
         self.assertTrue(self.puzzle)
+    def test_rows_gives_an_answer(self):
+        self.assertEqual(9, len(self.puzzle.rows()))
     def test_initialized_to_zero(self):
+        "verifies initially zeroed board"
         self.assertEqual(0, self.puzzle.row(0)[0])
         self.assertEqual(0, self.puzzle.row(8)[8])
     def test_cols_gives_an_answer(self):
         self.assertEqual(9, len(self.puzzle.cols()))
     def test_col(self):
         self.assertEqual(0, self.puzzle.col(4)[0])
+    def test_getitem_returns_row(self):
+        self.assertEqual(self.puzzle.row(0), self.puzzle[0])
+    def test_getitem_sufficient_for_setitem(self):
+        """
+        since getitem returns row as a list, setitem on the list should
+        be transparent
+        """
+        self.puzzle[0][0] = 1
+        self.assertEqual(1, self.puzzle[0][0])
 
 if __name__ == '__main__':
     unittest.main()
