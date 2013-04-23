@@ -9,13 +9,6 @@ class GridTests(unittest.TestCase):
         for row in range(9):
             for col in range(9):
                 self.puzzle[row][col] = (1 + (row + col) % 9)
-                print(str(1 + (row + col) % 9) + " at " + str(row) +", "+str(col))
-        print(str(self.puzzle))
-        print(str(self.puzzle.rows()))
-        print(str(self.puzzle.cols()))
-        print(str(self.puzzle.squares()))
-
-
     def test_class_exists(self):
         "verifies a class Sudoku exists"
         self.assertTrue(self.puzzle)
@@ -58,12 +51,7 @@ class GridTests(unittest.TestCase):
         self.assertTrue(self.puzzle.squares())
     def test_squares_access(self):
         self.assertEqual(1, self.puzzle.squares()[0][0][0])
-    def test_print_data(self):
-        print(str(self.puzzle))
-        print(str(self.puzzle.rows()))
-        print(str(self.puzzle.cols()))
-        print(str(self.puzzle.squares()))
-        self.assertTrue(True)
+
 
 if __name__ == '__main__':
     unittest.main()
