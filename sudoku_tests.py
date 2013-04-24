@@ -1,4 +1,5 @@
 import unittest
+import os
 from sudoku import Grid, Sudoku, SudokuSolver, SudokuReader, SudokuWriter
 
 class PythonGrammarCheck(unittest.TestCase):
@@ -222,6 +223,10 @@ class SudokuReaderTests(unittest.TestCase):
                 outputstring += str(tmp[row][col])
             outputstring += '\n'
             self.output.append(outputstring)
+    def tearDown(self):
+        filename = [f for f in os.listdir(".") if f.endswith("testing-reader")][0]
+        if f:
+            os.remove(f)
     def testReader(self):
         file = open("testing-reader", 'w')
         for string in self.output:
