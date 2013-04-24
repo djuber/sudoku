@@ -12,3 +12,4 @@ Just a one day project to make a python program that
 Things to add:
 make a front end that either asks for input or for an input file, and prints solution.
 
+Tested with python-2.7.3 and python-3.3.1 during creation.
