@@ -1,5 +1,10 @@
 import unittest
-from sudoku import Grid, Sudoku, SudokuSolver
+from sudoku import Grid, Sudoku, SudokuSolver, SudokuReader, SudokuWriter
+
+class PythonGrammarCheck(unittest.TestCase):
+    def test_None_is_False(self):
+        self.assertFalse(None)
+        
 
 class GridTests(unittest.TestCase):
     def setUp(self):
@@ -140,20 +145,117 @@ class SudokuTest(unittest.TestCase):
         self.assertTrue(tmp.solved())
         self.assertFalse(tmp.has_zero())
         self.assertTrue(tmp.consistent())
-
+    def test_zeros(self):
+        self.assertEqual(len(self.empty.zeros()), 81)
 
 class SudokuSolverTests(unittest.TestCase):
     def setUp(self):
-        pass
-    def test_empty_puzzle_has_all_possible(self):
+        self.empty = Sudoku()
+        self.solver = SudokuSolver()
         tmp = Sudoku()
-        solver = SudokuSolver()
+        tmp[0] = [2,4,8,3,9,5,7,1,6]
+        tmp[1] = [5,7,1,6,2,8,3,4,9]
+        tmp[2] = [9,3,6,7,4,1,5,8,2]
+        tmp[3] = [6,8,2,5,3,9,1,7,4]
+        tmp[4] = [3,5,9,1,7,4,6,2,8]
+        tmp[5] = [7,1,4,8,6,2,9,5,3]
+        tmp[6] = [8,6,3,4,1,7,2,9,5]
+        tmp[7] = [1,9,5,2,8,6,4,3,7]
+        tmp[8] = [4,2,7,9,5,3,8,6,1]
+        self.complete = tmp
+    def test_empty_puzzle_has_all_possible(self):
         nine = [1,2,3,4,5,6,7,8,9]
         for row in range(9):
             for col in range(9):
-                self.assertEqual(nine, solver.possible(tmp, row, col))
-    
+                self.assertEqual(nine, self.solver.possible(self.empty, row, col))
+    def test_try_value(self):
+        puzzle, worked = self.solver.try_value(self.empty, 0,0,1)
+        self.assertTrue(worked)
+        self.empty[0][0] = 0
+    def test_try_value_raises_errors(self):
+        self.assertRaises(IndexError, self.solver.try_value, self.empty, -1, 7, 7)
+        self.assertRaises(IndexError, self.solver.try_value, self.empty, 7, 10, 7)
+        self.assertRaises(ValueError, self.solver.try_value, self.empty, 0,0, 10)
+        self.assertRaises(ValueError, self.solver.try_value, self.empty, 0,0,-1)
+    def test_try_value_wont_clobber(self):
+        self.assertRaises(ValueError, self.solver.try_value, self.complete, 0,0, 1)
+    def test_solver_accepts_solved(self):
+        self.assertTrue(self.solver.solve(self.complete))
+    # def test_solver_works(self):
+    # this did pass, commented out since it took a while
+    #     self.assertTrue(self.solver.solve(self.empty))
+    # def test_solver_works_from_paper(self):
+    #     paper = Sudoku()
+    #     paper[0] = [0,0,0,0,2,0,3,0,1]
+    #     paper[1] = [0,0,0,1,0,6,2,0,0]
+    #     paper[2] = [1,7,2,0,5,0,4,0,6]
+    #     paper[3] = [0,0,3,2,0,0,1,0,7]
+    #     paper[4] = [0,0,9,0,0,1,6,2,0]
+    #     paper[5] = [2,1,7,0,6,8,9,0,0]
+    #     paper[6] = [4,9,0,6,1,0,0,3,2]
+    #     paper[7] = [0,0,1,9,0,0,0,6,4]
+    #     paper[8] = [7,0,6,0,8,0,5,1,9]
+    #     solved = self.solver.solve(paper)
+    #     self.assertTrue(solved)
+    #     print(solved)
+    #     for i in range(9):
+    #         print(solved[i])
 
+class SudokuReaderTests(unittest.TestCase):
+    def setUp(self):
+        tmp = Sudoku()
+        tmp[0] = [2,4,8,3,9,5,7,1,6]
+        tmp[1] = [5,7,1,6,2,8,3,4,9]
+        tmp[2] = [9,3,6,7,4,1,5,8,2]
+        tmp[3] = [6,8,2,5,3,9,1,7,4]
+        tmp[4] = [3,5,9,1,7,4,6,2,8]
+        tmp[5] = [7,1,4,8,6,2,9,5,3]
+        tmp[6] = [8,6,3,4,1,7,2,9,5]
+        tmp[7] = [1,9,5,2,8,6,4,3,7]
+        tmp[8] = [4,2,7,9,5,3,8,6,1]
+        self.complete = tmp
+        self.output = []
+        for row in range(9):
+            outputstring = ""
+            for col in range(9):
+                outputstring += str(tmp[row][col])
+            outputstring += '\n'
+            self.output.append(outputstring)
+    def testReader(self):
+        file = open("testing-reader", 'w')
+        for string in self.output:
+            file.write(string)
+        file.close()
+        file = open("testing-reader", 'r')
+        puzzle = SudokuReader(file)
+        self.assertTrue(puzzle)
+        self.assertTrue(isinstance(puzzle, Sudoku))
+        self.assertTrue(puzzle.consistent())
+        # print("")
+        # for i in range(9):
+        #     print(puzzle[i])
+        # print("")
+        self.assertFalse(puzzle.has_zero())
+        self.assertTrue(puzzle.solved())
+    def testReaderRaisesValueErrorOnShortLines(self):
+        file = open("testing-reader", 'w')
+        count = 0
+        for string in self.output:
+            if count == 4:
+                file.write("35917\n")
+            else:
+                file.write(string)
+            count += 1
+        file.close()
+        file = open("testing-reader", 'r')
+        self.assertRaises(ValueError, SudokuReader, file)
+    def testWriterMakesReadableFile(self):
+        file = open("testing-reader", 'w')
+        SudokuWriter(file, self.complete)
+        file.close()
+        file = open("testing-reader", 'r')
+        puzzle = SudokuReader(file)
+        self.assertTrue(puzzle.solved())
 
 if __name__ == '__main__':
     unittest.main()
