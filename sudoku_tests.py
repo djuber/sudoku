@@ -147,7 +147,9 @@ class SudokuTest(unittest.TestCase):
         self.assertTrue(tmp.consistent())
     def test_zeros(self):
         self.assertEqual(len(self.empty.zeros()), 81)
-
+    def test_print(self):
+        self.assertTrue(len(str(self.empty)) > 50)
+    
 class SudokuSolverTests(unittest.TestCase):
     def setUp(self):
         self.empty = Sudoku()
@@ -181,25 +183,24 @@ class SudokuSolverTests(unittest.TestCase):
         self.assertRaises(ValueError, self.solver.try_value, self.complete, 0,0, 1)
     def test_solver_accepts_solved(self):
         self.assertTrue(self.solver.solve(self.complete))
+    # next test is time consuming (maybe 10 seconds or so):
     # def test_solver_works(self):
-    # this did pass, commented out since it took a while
     #     self.assertTrue(self.solver.solve(self.empty))
-    # def test_solver_works_from_paper(self):
-    #     paper = Sudoku()
-    #     paper[0] = [0,0,0,0,2,0,3,0,1]
-    #     paper[1] = [0,0,0,1,0,6,2,0,0]
-    #     paper[2] = [1,7,2,0,5,0,4,0,6]
-    #     paper[3] = [0,0,3,2,0,0,1,0,7]
-    #     paper[4] = [0,0,9,0,0,1,6,2,0]
-    #     paper[5] = [2,1,7,0,6,8,9,0,0]
-    #     paper[6] = [4,9,0,6,1,0,0,3,2]
-    #     paper[7] = [0,0,1,9,0,0,0,6,4]
-    #     paper[8] = [7,0,6,0,8,0,5,1,9]
-    #     solved = self.solver.solve(paper)
-    #     self.assertTrue(solved)
-    #     print(solved)
-    #     for i in range(9):
-    #         print(solved[i])
+    def test_solver_works_from_paper(self):
+        "grabbed a puzzle out of this weeks paper."
+        paper = Sudoku()
+        paper[0] = [0,0,0,0,2,0,3,0,1]
+        paper[1] = [0,0,0,1,0,6,2,0,0]
+        paper[2] = [1,7,2,0,5,0,4,0,6]
+        paper[3] = [0,0,3,2,0,0,1,0,7]
+        paper[4] = [0,0,9,0,0,1,6,2,0]
+        paper[5] = [2,1,7,0,6,8,9,0,0]
+        paper[6] = [4,9,0,6,1,0,0,3,2]
+        paper[7] = [0,0,1,9,0,0,0,6,4]
+        paper[8] = [7,0,6,0,8,0,5,1,9]
+        solved = self.solver.solve(paper)
+        self.assertTrue(solved)
+
 
 class SudokuReaderTests(unittest.TestCase):
     def setUp(self):
@@ -231,10 +232,6 @@ class SudokuReaderTests(unittest.TestCase):
         self.assertTrue(puzzle)
         self.assertTrue(isinstance(puzzle, Sudoku))
         self.assertTrue(puzzle.consistent())
-        # print("")
-        # for i in range(9):
-        #     print(puzzle[i])
-        # print("")
         self.assertFalse(puzzle.has_zero())
         self.assertTrue(puzzle.solved())
     def testReaderRaisesValueErrorOnShortLines(self):

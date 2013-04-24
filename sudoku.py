@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 class Grid():
     def __init__(self):
@@ -59,6 +59,11 @@ class Grid():
             return square
 
 class Sudoku(Grid):
+    def __str__(self):
+        string = ""
+        for i in range(9):
+            string += str(self[i]) + '\n'
+        return string
     def unique_non_zero(self, box):
         for i in range(len(box)):
             if box[i] != 0 and box[i] in box[i+1:]:
@@ -128,9 +133,10 @@ class SudokuSolver():
         if 0 > row or 0 > col or 8 < row or 8 < col:
             raise IndexError
         if puzzle[row][col] != 0:
-            raise ValueError
+            raise ValueError("non-zero element at "+ str(row) + ',' 
+                             + str(col) + "in\n"+ str(puzzle))
         elif value < 1 or value > 9:
-            raise ValueError
+            raise ValueError("out of allowed range: " + str(value))
         else:
             puzzle[row][col] = value
             if puzzle.consistent():
@@ -138,6 +144,15 @@ class SudokuSolver():
             else:
                 puzzle[row][col] = 0
                 return (puzzle, False)
+    def minimal_possibility(self, puzzle):
+        min_list = None
+        for row, col in puzzle.zeros():
+            current = self.possible(puzzle, row, col)
+            if not min_list or len(current) < len(min_list):
+                min_list = current
+                min_location = (row, col)
+        row, col = min_location
+        return row, col, min_list
     def solve(self, puzzle):
         # todo : refactor this mess!
         """ goal : if puzzle solved, stop, return puzzle.
@@ -153,33 +168,13 @@ class SudokuSolver():
             return puzzle
         if not puzzle.consistent():
             return None
-        possibilities = []
-        min_list = None
-        min_location = (None, None)
-        for row, col in puzzle.zeros():
-            current = self.possible(puzzle, row, col)
-            """ if there is only one possibility for a cell, try it. If it fails, we've gone the wrong way"""
-            if len(current) == 1:
-                puzzle[row][col] = current[0]
-                check = self.solve(puzzle)
-                if check:
-                    return check
-                else: 
-                    # reset this guess and go up the stack
-                    puzzle[row][col] = 0
-                    return None
-            if not min_list or len(current) < len(min_list):
-                min_list = current
-                min_location = (row, col)
-            possibilities.append( (row, col, current))
-        """ now we have all the unsolved locations, and the shortest one """
-        row, col  = min_location
+        row, col, min_list  = self.minimal_possibility(puzzle)
         for p in min_list:
             puzz, worked = self.try_value(puzzle, row, col, p)
             if worked:
                 if self.solve(puzz):
                     return puzz
-        puzzle[row][col] = 0
+            puzzle[row][col] = 0
         return None
 
 def SudokuReader(fileobj):
