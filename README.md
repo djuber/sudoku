@@ -11,5 +11,6 @@ Just a one day project to make a python program that
 
 Things to add:
 make a front end that either asks for input or for an input file, and prints solution.
+(done) currently calling python sudoku-driver.py filename does this
 
 Tested with python-2.7.3 and python-3.3.1 during creation.
