@@ -225,8 +225,8 @@ class SudokuReaderTests(unittest.TestCase):
             self.output.append(outputstring)
     def tearDown(self):
         filename = [f for f in os.listdir(".") if f.endswith("testing-reader")][0]
-        if f:
-            os.remove(f)
+        if filename:
+            os.remove(filename)
     def testReader(self):
         file = open("testing-reader", 'w')
         for string in self.output:
